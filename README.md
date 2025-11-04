@@ -81,18 +81,17 @@ A continuación, se detalla la función, estructura e implementación de cada co
 * **Funcionalidad:** Los archivos `.feature` definen los escenarios de prueba utilizando el lenguaje Gherkin. Estos archivos describen el comportamiento esperado de la aplicación de forma clara, legible y orientada al negocio. Representan **qué** debe hacer la prueba, no **cómo** se ejecuta.
 
 * **Estructura**
-    Cada `.feature` sigue una estructura estándar:
-      * **Feature:** Título general que describe la funcionalidad que se quiere validar.  
-      * **Background:** Conjunto de pasos que se ejecutan antes de cada escenario de la feature. Útil para acciones repetitivas como navegar a la URL base, iniciar la aplicación, etc.
-      * **Scenario/Scenario Outline:** Representan casos de prueba individuales.
-        * Scenario: Caso puntual.
-        * Scenario Outline: Permite repetir el mismo escenario con distintos datos.
-      * **Steps**
-        Los pasos del escenario, escritos con las palabras clave de Gherkin:
-          * Given: Estado inicial.
-          * When: Acción ejecutada.
-          * Then: Resultado esperado.
-          * And/But: Complementos de pasos.
+    * Cada `.feature` sigue una estructura estándar:
+        * **Feature:** Título general que describe la funcionalidad que se quiere validar.  
+        * **Background:** Conjunto de pasos que se ejecutan antes de cada escenario de la feature. Útil para acciones repetitivas como navegar a la URL base, iniciar la aplicación, etc.
+        * **Scenario/Scenario Outline:** Representan casos de prueba individuales.
+            * Scenario: Caso puntual.
+            * Scenario Outline: Permite repetir el mismo escenario con distintos datos.
+        * **Steps:** Los pasos del escenario, escritos con las palabras clave de Gherkin:
+            * Given: Estado inicial.
+            * When: Acción ejecutada.
+            * Then: Resultado esperado.
+            * And/But: Complementos de pasos.
 
 * **Implementación:** Cada paso del archivo .feature busca una coincidencia en los Step Definitions mediante expresiones regulares o anotaciones de Cucumber.
     * Los Step Definitions interactúan con las Page Objects, que heredan de BasePage, manteniendo una separación clara entre:
@@ -121,7 +120,7 @@ A continuación, se detalla la función, estructura e implementación de cada co
 
 * **Estructura:**
     * **@Before:** Llama a `WebDriverSetup.setup()` para abrir y configurar el navegador.  
-    * **@After:**  
+    * **@After:**  Tiene dos caminos posibles:
         * Si el escenario falla, captura pantalla y la adjunta al reporte.  
         * Siempre ejecuta `WebDriverSetup.quitDriver()`.
 
