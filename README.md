@@ -6,7 +6,7 @@
 ![Gradle](https://img.shields.io/badge/Gradle-8.5-blue?logo=gradle&style=for-the-badge)
 ![JUnit5](https://img.shields.io/badge/JUnit-5-blue?logo=junit5&style=for-the-badge)
 
-* Este es un esqueleto de framework de automatización de pruebas web construido con Selenium, Java, Cucumber y Gradle. Está diseñado para ser robusto, escalable y fácil de mantener, siguiendo las mejores prácticas de la industria como el Page Object Model (POM).
+Este es un esqueleto de framework de automatización de pruebas web construido con Selenium, Java, Cucumber y Gradle. Está diseñado para ser robusto, escalable y fácil de mantener, siguiendo las mejores prácticas de la industria como el Page Object Model (POM).
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -17,6 +17,10 @@
 * **JUnit**: Como motor de ejecución de pruebas para Cucumber.
 * **WebDriverManager**: Para la gestión automática de los binarios de los drivers.
 * **Log4j2**: Para un sistema de logging profesional.
+
+## 🎯 Objetivo
+
+Brindar un punto de partida sólido para crear proyectos de automatización profesionales, permitiendo agregar funcionalidades sin preocuparse por la configuración inicial.
 
 ## ⚙️ Configuración
 
