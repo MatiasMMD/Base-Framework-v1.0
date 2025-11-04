@@ -29,7 +29,7 @@
 
 ## 📁 Estructura del Proyecto
 
-A continuación, se detalla la función y estructura de cada componente clave del proyecto.
+A continuación, se detalla la función, estructura e implementación de cada componente clave del proyecto.
 
 ### 🏗️ **BasePage.java**
 
@@ -42,6 +42,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Cualquier Page Object debe heredar de `BasePage` para acceder automáticamente al driver y a los métodos utilitarios. Ejemplo: `public class LoginPage extends BasePage`.
 
+---
 
 ### 🌐 **WebDriverSetup.java**
 
@@ -60,6 +61,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Usado por Hooks (`@Before` → setup, `@After` → quitDriver).
 
+---
 
 ### 🧾 **ConfigReader.java**
 
@@ -72,6 +74,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Utilizado por `WebDriverSetup`, `BasePage` y también en Step Definitions para datos de prueba.
 
+---
 
 ### 📝 **Archivos .feature (Cucumber)**
 
@@ -97,6 +100,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
         * Cómo se ejecuta → Steps + Pages
     * Esto garantiza un diseño limpio, escalable y fácil de mantener
 
+---
 
 ### 🧰 **ActionsHelper.java**
 
@@ -109,6 +113,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Instanciado dentro de `BasePage`, accesible por todas las Pages.
 
+---
 
 ### ⚙️ **Hooks.java**
 
@@ -122,6 +127,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Cucumber ejecuta automáticamente los métodos anotados dentro del paquete `steps`.
 
+---
 
 ### 🧪 **TestRunner.java**
 
@@ -137,6 +143,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Ejecutado automáticamente al correr `./gradlew test`.
 
+---
 
 ### 🤖 **build.gradle**
 
@@ -150,6 +157,7 @@ A continuación, se detalla la función y estructura de cada componente clave de
 
 * **Implementación:** Usado a través de comandos como `./gradlew build` y `./gradlew test`.
 
+---
 
 ### 📦 **Archivos de Configuración y Recursos**
 
