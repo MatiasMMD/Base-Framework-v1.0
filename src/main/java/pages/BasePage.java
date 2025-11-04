@@ -7,6 +7,7 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import utils.WebDriverSetup;
@@ -15,7 +16,6 @@ import utils.ActionsHelper;
 
 public class BasePage {
     protected WebDriver driver; 
-    protected org.openqa.selenium.support.ui.ExpectedConditions ExpectedConditions; 
     protected WebDriverWait wait;
     private ConfigReader configReader;
     protected ActionsHelper actionsHelper;
@@ -44,7 +44,7 @@ public class BasePage {
     }
 
     private WebElement find(String locator){
-        return wait.until(org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated(By.xpath(locator)));
+        return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(locator)));
     }
 
     // Métodos con locators.
@@ -102,15 +102,15 @@ public class BasePage {
     // Métodos con WebElement
 
     public void clickElement (WebElement element){
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable(element)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
     }
 
     public void submitElement(WebElement element){
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(element)).submit();
+        wait.until(ExpectedConditions.visibilityOf(element)).submit();
     }
 
     public void write (WebElement element, String textToWrite){
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(element));
+        wait.until(ExpectedConditions.visibilityOf(element));
         element.clear();
         element.sendKeys(textToWrite);
     }
@@ -137,12 +137,12 @@ public class BasePage {
     }
 
     public String textFromElement (WebElement element){
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(element));
+        wait.until(ExpectedConditions.visibilityOf(element));
         return element.getText();
     }
 
     public boolean elementEnabled(WebElement element){
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf(element));
+        wait.until(ExpectedConditions.visibilityOf(element));
         return element.isEnabled();
     }
 

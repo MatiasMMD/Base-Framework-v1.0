@@ -9,15 +9,18 @@ public class ConfigReader {
     private final Properties properties;
 
     private ConfigReader() {
-        String propertyFilePath = "src/main/resources/config.properties";
         properties = new Properties();
-        try {
-            FileInputStream fis = new FileInputStream(propertyFilePath);
-            properties.load(fis);
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("config.properties file not found at " + propertyFilePath);
+        String[] propertyFiles = {
+            "src/main/resources/config.properties",
+            "src/main/resources/credentials.properties" 
+        };
+
+        for (String filePath : propertyFiles) {
+            try (FileInputStream fis = new FileInputStream(filePath)) {
+                properties.load(fis);
+            } catch (IOException e) {
+                System.out.println("Warning: Property file not found: " + filePath + ". This might be expected for credentials.properties in some environments.");
+            }
         }
     }
 
@@ -41,4 +44,8 @@ public class ConfigReader {
     public String getBaseUrl() { return getProperty("baseUrl"); }
     public long getImplicitWait() { return Long.parseLong(getProperty("implicitWait")); }
     public long getExplicitWait() { return Long.parseLong(getProperty("explicitWait")); }
+
+    // Métodos para devolver credenciales sin harcodearlas
+    public String getUsername() { return getProperty("username"); }
+    public String getPassword() { return getProperty("password"); }
 }
