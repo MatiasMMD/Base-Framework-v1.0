@@ -8,8 +8,6 @@
 
 * Este es un esqueleto de framework de automatización de pruebas web construido con Selenium, Java, Cucumber y Gradle. Está diseñado para ser robusto, escalable y fácil de mantener, siguiendo las mejores prácticas de la industria como el Page Object Model (POM).
 
----
-
 ## 🛠️ Tecnologías Utilizadas
 
 * **Java 21**: Lenguaje de programación.
@@ -20,8 +18,6 @@
 * **WebDriverManager**: Para la gestión automática de los binarios de los drivers.
 * **Log4j2**: Para un sistema de logging profesional.
 
----
-
 ## ⚙️ Configuración
 
 1. **Clona el repositorio.**
@@ -31,169 +27,131 @@
     * `explicitWait`: Tiempo máximo de espera explícita en segundos.
 3. **Credenciales**: Añade tus credenciales de prueba en `src/main/resources/credentials.properties`. Este archivo está ignorado por Git para proteger tus datos sensibles.
 
----
-
 ## 📁 Estructura del Proyecto
 
 A continuación, se detalla la función y estructura de cada componente clave del proyecto.
 
-### **BasePage.java**
+### 🏗️ **BasePage.java**
 
-**Funcionalidad:** Es la clase “madre” de todas las Page Objects. Centraliza interacciones comunes de Selenium (clics, escritura, esperas, selects, etc.), evitando duplicación de código y manteniendo las clases hijas enfocadas en su propia lógica.
+* **Funcionalidad:** Es la clase “madre” de todas las Page Objects. Centraliza interacciones comunes de Selenium (clics, escritura, esperas, selects, etc.), evitando duplicación de código y manteniendo las clases hijas enfocadas en su propia lógica.
 
-**Estructura:**
+* **Estructura:**
+    * **Atributos:** Instancias protegidas de `WebDriver`, `WebDriverWait` y `ActionsHelper`.  
+    * **Constructor:** Obtiene el driver desde `WebDriverSetup`, inicializa `WebDriverWait` con tiempos tomados de `config.properties` y crea una instancia de `ActionsHelper`.  
+    * **Métodos:** Métodos genéricos para interactuar con elementos web, sobrecargados para aceptar un `String` (XPath) o un `WebElement`. Ejemplos: `clickElement()`, `write()`, `selectDropdownByValue()`, `elementIsDisplayed()`.
 
-* **Atributos:** Instancias protegidas de `WebDriver`, `WebDriverWait` y `ActionsHelper`.  
-* **Constructor:** Obtiene el driver desde `WebDriverSetup`, inicializa `WebDriverWait` con tiempos tomados de `config.properties` y crea una instancia de `ActionsHelper`.  
-* **Métodos:** Métodos genéricos para interactuar con elementos web, sobrecargados para aceptar un `String` (XPath) o un `WebElement`.  
-  Ejemplos: `clickElement()`, `write()`, `selectDropdownByValue()`, `elementIsDisplayed()`.
+* **Implementación:** Cualquier Page Object debe heredar de `BasePage` para acceder automáticamente al driver y a los métodos utilitarios. Ejemplo: `public class LoginPage extends BasePage`.
 
-**Implementación:**  
-Cualquier Page Object debe heredar de `BasePage` para acceder automáticamente al driver y a los métodos utilitarios.  
-Ejemplo: `public class LoginPage extends BasePage`.
 
----
+### 🌐 **WebDriverSetup.java**
 
-### **WebDriverSetup.java**
+* **Funcionalidad:** Gestiona completamente el ciclo de vida del WebDriver. Crea, configura, entrega y destruye la instancia del navegador usando `ThreadLocal` para garantizar paralelismo seguro.
 
-**Funcionalidad:** Gestiona completamente el ciclo de vida del WebDriver. Crea, configura, entrega y destruye la instancia del navegador usando `ThreadLocal` para garantizar paralelismo seguro.
+* **Estructura:**
+    * **ThreadLocal webDriver:** Almacena una instancia de WebDriver por hilo.  
+    * **setup():**  
+        * Lee navegador desde `ConfigReader`.  
+        * Usa WebDriverManager para configurar el driver.  
+        * Crea el navegador con opciones como `--start-maximized`.  
+        * Configura esperas implícitas.  
+        * Guarda la instancia en el `ThreadLocal`.  
+    * **getDriver():** Devuelve el WebDriver del hilo actual.  
+    * **quitDriver():** Cierra el navegador y limpia el `ThreadLocal`.
 
-**Estructura:**
+* **Implementación:** Usado por Hooks (`@Before` → setup, `@After` → quitDriver).
 
-* **ThreadLocal webDriver:** Almacena una instancia de WebDriver por hilo.  
-* **setup():**  
-  * Lee navegador desde `ConfigReader`.  
-  * Usa WebDriverManager para configurar el driver.  
-  * Crea el navegador con opciones como `--start-maximized`.  
-  * Configura esperas implícitas.  
-  * Guarda la instancia en el `ThreadLocal`.  
-* **getDriver():** Devuelve el WebDriver del hilo actual.  
-* **quitDriver():** Cierra el navegador y limpia el `ThreadLocal`.
 
-**Implementación:**  
-Usado por Hooks (`@Before` → setup, `@After` → quitDriver).
+### 🧾 **ConfigReader.java**
 
----
+* **Funcionalidad:** Maneja la lectura de propiedades del framework. Centraliza configuraciones que pueden variar entre entornos: URL, navegador, timeouts, credenciales, etc.
 
-### **ConfigReader.java**
+* **Estructura:**
+    * **Patrón Singleton:** Una única instancia cargada una vez para rendimiento óptimo.  
+    * **Constructor:** Carga `config.properties` y `credentials.properties`.  
+    * **Métodos get...():** Obtienen valores específicos como `getBrowser()`, `getBaseUrl()`, `getUsername()`, realizando conversiones si corresponde.
 
-**Funcionalidad:** Maneja la lectura de propiedades del framework. Centraliza configuraciones que pueden variar entre entornos: URL, navegador, timeouts, credenciales, etc.
+* **Implementación:** Utilizado por `WebDriverSetup`, `BasePage` y también en Step Definitions para datos de prueba.
 
-**Estructura:**
 
-* **Patrón Singleton:** Una única instancia cargada una vez para rendimiento óptimo.  
-* **Constructor:** Carga `config.properties` y `credentials.properties`.  
-* **Métodos get...():** Obtienen valores específicos como `getBrowser()`, `getBaseUrl()`, `getUsername()`, realizando conversiones si corresponde.
+### 📝 **Archivos .feature (Cucumber)**
 
-**Implementación:**  
-Utilizado por `WebDriverSetup`, `BasePage` y también en Step Definitions para datos de prueba.
+* **Funcionalidad:** Los archivos `.feature` definen los escenarios de prueba utilizando el lenguaje Gherkin. Estos archivos describen el comportamiento esperado de la aplicación de forma clara, legible y orientada al negocio. Representan **qué** debe hacer la prueba, no **cómo** se ejecuta.
 
----
+* **Estructura**
+    Cada `.feature` sigue una estructura estándar:
+      * **Feature:** Título general que describe la funcionalidad que se quiere validar.  
+      * **Background:** Conjunto de pasos que se ejecutan antes de cada escenario de la feature. Útil para acciones repetitivas como navegar a la URL base, iniciar la aplicación, etc.
+      * **Scenario/Scenario Outline:** Representan casos de prueba individuales.
+        * Scenario: Caso puntual.
+        * Scenario Outline: Permite repetir el mismo escenario con distintos datos.
+      * **Steps**
+        Los pasos del escenario, escritos con las palabras clave de Gherkin:
+          * Given: Estado inicial.
+          * When: Acción ejecutada.
+          * Then: Resultado esperado.
+          * And/But: Complementos de pasos.
 
-### **Archivos .feature (Cucumber)**
+* **Implementación:** Cada paso del archivo .feature busca una coincidencia en los Step Definitions mediante expresiones regulares o anotaciones de Cucumber.
+    * Los Step Definitions interactúan con las Page Objects, que heredan de BasePage, manteniendo una separación clara entre:
+        * Qué se prueba → .feature
+        * Cómo se ejecuta → Steps + Pages
+    * Esto garantiza un diseño limpio, escalable y fácil de mantener
 
-**Funcionalidad:**  
-Los archivos `.feature` definen los escenarios de prueba utilizando el lenguaje Gherkin. Estos archivos describen el comportamiento esperado de la aplicación de forma clara, legible y orientada al negocio. Representan **qué** debe hacer la prueba, no **cómo** se ejecuta.
 
-**Estructura**
-Cada `.feature` sigue una estructura estándar:
+### 🧰 **ActionsHelper.java**
 
-* **Feature:**  
-  Título general que describe la funcionalidad que se quiere validar.  
+* **Funcionalidad:** Facilita el uso de `Actions` de Selenium para acciones complejas como hover, doble clic, drag & drop.
 
-* **Background**
-Conjunto de pasos que se ejecutan antes de cada escenario de la feature.
-Útil para acciones repetitivas como navegar a la URL base, iniciar la aplicación, etc.
+* **Estructura:**
+    * **Atributos:** Instancia de `Actions`.  
+    * **Constructor:** Recibe el WebDriver e inicializa la instancia.  
+    * **Métodos:** Acciones como `moveToElement()`, `doubleClick()`, encapsulando siempre `.perform()`.
 
-* **Scenario/Scenario Outline**
-Representan casos de prueba individuales.
-  * Scenario: Caso puntual.
-  * Scenario Outline: Permite repetir el mismo escenario con distintos datos.
+* **Implementación:** Instanciado dentro de `BasePage`, accesible por todas las Pages.
 
-* **Steps**
-Los pasos del escenario, escritos con las palabras clave de Gherkin:
-  * Given: Estado inicial.
-  * When: Acción ejecutada.
-  * Then: Resultado esperado.
-  * And/But: Complementos de pasos.
 
-**Implementación**
+### ⚙️ **Hooks.java**
 
-* Cada paso del archivo .feature busca una coincidencia en los Step Definitions mediante expresiones regulares o anotaciones de Cucumber.
-* Los Step Definitions interactúan con las Page Objects, que heredan de BasePage, manteniendo una separación clara entre:
-  * Qué se prueba → .feature
-  * Cómo se ejecuta → Steps + Pages
+* **Funcionalidad:** Ejecuta lógica previa y posterior a cada escenario de Cucumber. Controla apertura de navegador, capturas y limpieza.
 
-* Esto garantiza un diseño limpio, escalable y fácil de mantener
+* **Estructura:**
+    * **@Before:** Llama a `WebDriverSetup.setup()` para abrir y configurar el navegador.  
+    * **@After:**  
+        * Si el escenario falla, captura pantalla y la adjunta al reporte.  
+        * Siempre ejecuta `WebDriverSetup.quitDriver()`.
 
----
+* **Implementación:** Cucumber ejecuta automáticamente los métodos anotados dentro del paquete `steps`.
 
-### **ActionsHelper.java**
 
-**Funcionalidad:** Facilita el uso de `Actions` de Selenium para acciones complejas como hover, doble clic, drag & drop.
+### 🧪 **TestRunner.java**
 
-**Estructura:**
+* **Funcionalidad:** Punto de entrada para ejecutar Cucumber a través de JUnit.
 
-* **Atributos:** Instancia de `Actions`.  
-* **Constructor:** Recibe el WebDriver e inicializa la instancia.  
-* **Métodos:** Acciones como `moveToElement()`, `doubleClick()`, encapsulando siempre `.perform()`.
+* **Estructura:**
+    * **@RunWith(Cucumber.class):** Indica a JUnit que use Cucumber como motor de ejecución.  
+    * **@CucumberOptions:**  
+        * `features`: Ruta a los archivos `.feature`.  
+        * `glue`: Paquete donde están Steps y Hooks.  
+        * `plugin`: Formatos de reporte (`pretty`, `html:target/cucumber-reports`).  
+        * `tags`: Filtro de escenarios.
 
-**Implementación:**  
-Instanciado dentro de `BasePage`, accesible por todas las Pages.
+* **Implementación:** Ejecutado automáticamente al correr `./gradlew test`.
 
----
 
-### **Hooks.java**
+### 🤖 **build.gradle**
 
-**Funcionalidad:** Ejecuta lógica previa y posterior a cada escenario de Cucumber. Controla apertura de navegador, capturas y limpieza.
+* **Funcionalidad:** Archivo central del build. Controla dependencias, compilación y ejecución.
 
-**Estructura:**
+* **Estructura:**
+    * **plugins:** Activa el plugin de Java.  
+    * **repositories:** `mavenCentral()`.  
+    * **dependencies:** Selenium, Cucumber, JUnit, WebDriverManager, Log4j2, etc.  
+    * **tasks.named("test"):** Configura la tarea `test` para pasar propiedades del sistema a la ejecución.
 
-* **@Before:** Llama a `WebDriverSetup.setup()` para abrir y configurar el navegador.  
-* **@After:**  
-  * Si el escenario falla, captura pantalla y la adjunta al reporte.  
-  * Siempre ejecuta `WebDriverSetup.quitDriver()`.
+* **Implementación:** Usado a través de comandos como `./gradlew build` y `./gradlew test`.
 
-**Implementación:**  
-Cucumber ejecuta automáticamente los métodos anotados dentro del paquete `steps`.
 
----
-
-### **TestRunner.java**
-
-**Funcionalidad:** Punto de entrada para ejecutar Cucumber a través de JUnit.
-
-**Estructura:**
-
-* **@RunWith(Cucumber.class):** Indica a JUnit que use Cucumber como motor de ejecución.  
-* **@CucumberOptions:**  
-  * `features`: Ruta a los archivos `.feature`.  
-  * `glue`: Paquete donde están Steps y Hooks.  
-  * `plugin`: Formatos de reporte (`pretty`, `html:target/cucumber-reports`).  
-  * `tags`: Filtro de escenarios.
-
-**Implementación:**  
-Ejecutado automáticamente al correr `./gradlew test`.
-
----
-
-### **build.gradle**
-
-**Funcionalidad:** Archivo central del build. Controla dependencias, compilación y ejecución.
-
-**Estructura:**
-
-* **plugins:** Activa el plugin de Java.  
-* **repositories:** `mavenCentral()`.  
-* **dependencies:** Selenium, Cucumber, JUnit, WebDriverManager, Log4j2, etc.  
-* **tasks.named("test"):** Configura la tarea `test` para pasar propiedades del sistema a la ejecución.
-
-**Implementación:**  
-Usado a través de comandos como `./gradlew build` y `./gradlew test`.
-
----
-
-### **Archivos de Configuración y Recursos**
+### 📦 **Archivos de Configuración y Recursos**
 
 * **config.properties / credentials.properties:**  
   Configuraciones del framework. Las credenciales deben ignorarse en Git por seguridad.  
@@ -201,8 +159,6 @@ Usado a través de comandos como `./gradlew build` y `./gradlew test`.
   Configura el logging (formato, destino y nivel).  
 * **gradlew / gradlew.bat:**  
   Wrappers de Gradle que garantizan la misma versión de Gradle en todos los entornos.
-
----
 
 ## ▶️ Cómo Ejecutar las Pruebas
 
